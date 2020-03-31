@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script> -->
+
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+    <title>
+        Vehicle Data
+    </title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+
+    <style>
+        #map-canvas {
+            height: 400px;
+            width: 500px;
+        }
+    </style>
+</head>
+
+<body style="padding:0px;">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col bg-dark text-white">
+                <a class="navbar-brand" href="/"> Vehicle Data</a>
+            </div>
+        </div>
+    </div>
+    <p id="updated_value"></p>
+    <div>
+        <table class="table table-sm table-striped">
+            <thead>
+                <tr>
+                    <th>Vehicle_Id</th>
+                    <th> Vehicle_No</th>
+                    <th>Vehicle_Desc</th>
+                    <th>SHOW LOCATION</th>
+
+                </tr>
+            </thead>
+            <tbody id="cartb">
+            </tbody>
+        </table>
+    </div>
+
+
+    
+
+   
+    <script src="/socket.io.js"></script>
+    
+
+    <script>
+
+
+        
+
+
+        window.addEventListener('load', function () {
+            // var socket = io("http://localhost:3003/");
+            // console.log(socket);
+            // socket.on('message', function (data) {
+            //     ///document.write(data[0].Vehicle_Id);
+            //     let rows = JSON.parse(JSON.parse(data).data);
+            //     let index = JSON.parse(JSON.parse(data).key);
+            //     let tr = `<tr>`;
+            //     let rowsHTML = rows.map((row) => {
+            //         console.log(row);
+            //         return `<tr><td>${row.Vehicle_Id}</td>
+            //     <td>${row.Vehicle_No}</td>
+            //     <td>${row.Vehicle_Desc}</td>
+            //     <td>${row.Lat}</td></tr>`;
+            //     });
+
+            //     document.getElementById('updated_value').innerHTML = "";
+            //     document.getElementById('updated_value').innerHTML = index;
+
+            //     document.getElementById('cartb').innerHTML = "";
+
+            //     document.getElementById('cartb').innerHTML = rowsHTML.join('');
+            // });
+
+            showList();
+        }, false);
+
+        function showModal(indexData) {
+            console.log("index data " + indexData);
+            window.open('/location/' + indexData, '_blank');
+        }
+
+        function showList() {
+            $.ajax({
+                type: 'POST',
+                url: '/data',
+                data: '{}',
+                success: function (data) {
+                    var dataEntry = JSON.parse(JSON.parse(JSON.stringify(data)).data);
+                    let tr = `<tr>`;
+                    let rowsHTML = dataEntry.map((row) => {
+                        console.log(row);
+                        let id = row.Vehicle_Id;
+                        return `<tr><td>${row.Vehicle_Id}</td>
+                            <td>${row.Vehicle_No}</td>
+                            <td>${row.Vehicle_Desc}</td>
+
+                           <td> <input type="button" class="mybutton btn btn-primary" onclick="showModal(` + row.Vehicle_Id + `)" value="Show Location" /> `;
+                    });
+                    document.getElementById('cartb').innerHTML = "";
+                    document.getElementById('cartb').innerHTML = rowsHTML.join('');
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert("some error");
+                },
+                contentType: "application/json",
+                dataType: 'json'
+            });
+        }
+
+
+
+    </script>
+</body>
+
+</html>
